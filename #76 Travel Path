@@ -1,0 +1,86 @@
+#include <cstdio>
+#include <cstring>
+#include <cctype>
+#include <algorithm>
+#include <cmath>
+using namespace std;
+
+namespace thecold
+{
+	inline int read()
+	{
+		int res = 0;
+		char c;
+		bool flag = false;
+		c = getchar();
+		while(!isdigit(c))
+		{
+			flag = (c == '-');
+			c = getchar();
+		}
+		while(isdigit(c))
+		{
+			res = res * 10 + (c ^ 48);
+			c = getchar();
+		}
+		return !flag ? res : -res;
+	}
+
+	const int Max_n = 105;
+	const double INF = 1e9;
+
+	int n;
+
+	double f[Max_n][Max_n];
+
+	struct node
+	{
+		int xi , yi;
+		node(int a , int b)
+		{
+			xi = a , yi = b;
+		}
+		node(){}
+	}dot[Max_n];
+
+	inline bool cmp(node a , node b)
+	{
+		return a.xi < b.xi;
+	}
+
+	inline double dist(const int x , const int y)
+	{
+		return hypot(dot[x].xi - dot[y].xi , dot[x].yi - dot[y].yi);
+	}
+
+	inline void main()
+	{
+		n = read();
+		for(int i = 1 ; i <= n ; ++ i)
+		{
+			int ui = read() , vi = read();
+			dot[i] = node(ui , vi);
+		}
+		sort(dot + 1 , dot + n + 1 , cmp);
+		for(int i = 1 ; i <= n ; ++ i)
+			for(int j = 1 ; j <= n ; ++ j)
+				f[i][j] = INF;
+		f[1][1] = 0;
+		for(int i = 1 ; i < n ; ++ i)
+			for(int j = 1 ; j <= i ; ++ j)
+			{
+				f[i + 1][j] = min(f[i + 1][j] , f[i][j] + dist(i , i + 1));
+				f[i + 1][i] = min(f[i + 1][i] , f[i][j] + dist(j , i + 1));
+			}
+		double ans = INF;
+		for(int i = 1 ; i <= n ; ++ i)
+			ans = min(ans , f[n][i] + dist(i , n));
+		printf("%.2lf" , ans);
+	}
+}
+
+int main()
+{
+	thecold::main();
+	return 0;
+}
