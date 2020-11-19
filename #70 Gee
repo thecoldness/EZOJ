@@ -1,0 +1,76 @@
+#include <cstdio>
+#include <cstring>
+#include <cctype>
+#include <algorithm>
+using namespace std;
+
+namespace thecold
+{
+	inline int read()
+	{
+		int res = 0;
+		char c;
+		bool flag = false;
+		c = getchar();
+		while(!isdigit(c))
+		{
+			flag = (c == '-');
+			c = getchar();
+		}
+		while(isdigit(c))
+		{
+			res = res * 10 + (c ^ 48);
+			c = getchar();
+		}
+		return !flag ? res : -res;
+	}
+
+	const int Max_m = 1005;
+	const int Max_n = 1030;
+
+	char c[Max_n][Max_m];
+
+	int n , m , pos , son[Max_n << 2][2];
+	int s[Max_n << 2] , ans , tot;
+
+	void dfs(const int l , const int r , const int tr)
+	{
+		if(l == r)
+		{
+			s[tr] = (1 << (c[l][pos] - 'A'));
+			return;
+		}
+		int mid = (l + r) >> 1;
+		dfs(l , mid , tr * 2);
+		dfs(mid + 1 , r , tr * 2 + 1);
+		int tmp = s[tr * 2] & s[tr * 2 + 1];
+		if(tmp)
+			s[tr] = tmp;
+		else	s[tr] = s[tr * 2] | s[tr * 2 + 1] , ++ ans;
+	}
+
+	inline void main()
+	{
+		n = read() , m = read();
+		for(int i = 1 ; i <= n ; ++ i)
+			scanf("%s" , c[i] + 1);
+		for(pos = 1 ; pos <= m ; ++ pos)
+		{
+			dfs(1 , n , 1);			
+			for(int i = 0 ; i < 26 ; ++ i)
+				if(s[1] & (1 << i))
+				{
+					putchar('A' + i);
+					break;
+				}
+		}
+		putchar(' ');
+		printf("%d\n" , ans);
+	}
+}
+
+int main()
+{
+	thecold::main();
+	return 0;
+}
